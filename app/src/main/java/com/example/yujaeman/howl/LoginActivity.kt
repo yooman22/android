@@ -15,16 +15,19 @@ import kotlinx.android.synthetic.main.activity_login.*
 import android.content.pm.PackageManager
 import com.google.android.gms.common.util.ClientLibraryUtils.getPackageInfo
 import android.content.pm.PackageInfo
+import android.nfc.Tag
+import android.text.method.MovementMethod
 import android.util.Base64
 import android.util.Log
 import android.webkit.WebView
 import com.facebook.*
-import com.facebook.appevents.AppEventsLogger
-import com.facebook.internal.FacebookSignatureValidator
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import java.security.MessageDigest
 import java.util.*
+import javax.security.auth.callback.Callback
 
 
 class LoginActivity : AppCompatActivity() {
@@ -37,20 +40,22 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
         auth = FirebaseAuth.getInstance()
 
         email_login_button.setOnClickListener { view ->
             createAndLoginEmail()
         }
-
         google_sign_in_button.setOnClickListener { view->
             googleLogin()
         }
-
         facebook_login_button.setOnClickListener { view->
             facebookLogin()
         }
-
+        twitter_sign_in_button.setOnClickListener { view ->
+            //twitterLogin()
+        }
 
 
 
@@ -63,21 +68,21 @@ class LoginActivity : AppCompatActivity() {
         callbackManager = CallbackManager.Factory.create()
         //printHashKey(this)
     }
-
-    fun printHashKey(context: Context) {
-        try {
-            val info = context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_SIGNATURES)
-            for (signature in info.signatures) {
-                val md = MessageDigest.getInstance("SHA")
-                md.update(signature.toByteArray())
-                val hashKey = String(Base64.encode(md.digest(), 0))
-                Log.i("AppLog", "key:$hashKey=")
-            }
-        } catch (e: Exception) {
-            Log.e("AppLog", "error:", e)
-        }
-
-    }
+//
+//    fun printHashKey(context: Context) {
+//        try {
+//            val info = context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_SIGNATURES)
+//            for (signature in info.signatures) {
+//                val md = MessageDigest.getInstance("SHA")
+//                md.update(signature.toByteArray())
+//                val hashKey = String(Base64.encode(md.digest(), 0))
+//                Log.i("AppLog", "key:$hashKey=")
+//            }
+//        } catch (e: Exception) {
+//            Log.e("AppLog", "error:", e)
+//        }
+//
+//    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -86,18 +91,27 @@ class LoginActivity : AppCompatActivity() {
 
     fun createAndLoginEmail()
     {
-        auth?.createUserWithEmailAndPassword(email_edittext.text.toString(),password_edittext.text.toString())?.addOnCompleteListener{
-                task -> if(task.isSuccessful){
-            Toast.makeText(this,"아이디 생성 성공",Toast.LENGTH_LONG).show()
-        }
-        else if(task.exception?.message.isNullOrEmpty())
+        if(email_edittext.text.toString() == "")
         {
-            Toast.makeText(this,"아이디 생성 실패",Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "아이디를 입력해주세요", Toast.LENGTH_LONG).show()
         }
-        else
+        else if(password_edittext.text.toString() == "")
         {
-            emailLogin()
+            Toast.makeText(this, "비밀번호를 입력해주세요", Toast.LENGTH_LONG).show()
         }
+        else {
+            auth?.createUserWithEmailAndPassword(email_edittext.text.toString()!!, password_edittext.text.toString()!!)
+                ?.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(this, "아이디 생성 성공", Toast.LENGTH_LONG).show()
+                    } else if (task.exception?.message.isNullOrEmpty()) {
+                        Log.d("error", "login error2")
+                        Toast.makeText(this, "아이디 생성 실패", Toast.LENGTH_LONG).show()
+                    } else {
+                        Log.d("error", "login erro3")
+                        emailLogin()
+                    }
+                }
         }
     }
 
@@ -135,7 +149,7 @@ class LoginActivity : AppCompatActivity() {
     {
         var credential = GoogleAuthProvider.getCredential(account.idToken,null)
         auth?.signInWithCredential(credential)
-        startActivity(Intent(this,MainActivity::class.java))
+        moveMainPage(auth?.currentUser)
         this.finish()
     }
 
@@ -145,7 +159,7 @@ class LoginActivity : AppCompatActivity() {
         LoginManager.getInstance().registerCallback(callbackManager,object :FacebookCallback<LoginResult>{
             override fun onSuccess(result: LoginResult?) {
                 handleFaacebookAccessToken(result?.accessToken)
-                //startActivity(Intent(this@LoginActivity,MainActivity::class.java))
+
             }
 
             override fun onCancel() {
@@ -163,9 +177,19 @@ class LoginActivity : AppCompatActivity() {
     fun handleFaacebookAccessToken(token:AccessToken?)
     {
         var credential = FacebookAuthProvider.getCredential(token?.token!!)
-        auth?.signInWithCredential(credential)
+        auth?.signInWithCredential(credential)?.addOnCompleteListener{task->
+            if(task.isSuccessful)
+            {
+                moveMainPage(auth?.currentUser)
+            }
+
+        }
     }
 
+    override fun onResume() {
+        super.onResume()
+        moveMainPage(auth?.currentUser)
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
