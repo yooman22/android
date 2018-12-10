@@ -44,7 +44,7 @@ class LoginActivity : AppCompatActivity() {
         AppEventsLogger.activateApp(this);
         auth = FirebaseAuth.getInstance()
 
-        email_login_button.setOnClickListener { view ->
+        email_login_button.setOnClickListener{ view ->
             createAndLoginEmail()
         }
         google_sign_in_button.setOnClickListener { view->
@@ -84,11 +84,6 @@ class LoginActivity : AppCompatActivity() {
 //
 //    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-       FirebaseAuth.getInstance().signOut()
-    }
-
     fun createAndLoginEmail()
     {
         if(email_edittext.text.toString() == "")
@@ -100,7 +95,7 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(this, "비밀번호를 입력해주세요", Toast.LENGTH_LONG).show()
         }
         else {
-            auth?.createUserWithEmailAndPassword(email_edittext.text.toString()!!, password_edittext.text.toString()!!)
+            auth?.createUserWithEmailAndPassword(email_edittext.text.toString(), password_edittext.text.toString())
                 ?.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Toast.makeText(this, "아이디 생성 성공", Toast.LENGTH_LONG).show()

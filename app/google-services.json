@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "416379000677-9fta0besvs4u95qf8jakaf6k91ef3q0a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.yujaeman.howl",
+            "certificate_hash": "09e6db88326b126927eece733bf7e77f1ad83325"
+          }
+        },
+        {
           "client_id": "416379000677-epekd04m5remqv7q26ofhhjqukmg3g5h.apps.googleusercontent.com",
           "client_type": 3
         }
