@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() , BottomNavigationView.OnNavigationItem
         setContentView(R.layout.activity_main)
         Toolbar.bringToFront()
         bottom_navigation.setOnNavigationItemSelectedListener(this)
+        bottom_navigation.selectedItemId = R.id.action_home // 버튼이 처음에 바로 눌려짐
         ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),1)
 
     }

@@ -7,9 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.example.yujaeman.howl.R.id.addphoto_image
 import com.example.yujaeman.howl.model.ContentDTO
-import com.google.android.gms.common.api.internal.TaskUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -32,6 +30,7 @@ class AddPhotoActivity : AppCompatActivity() {
 
         storage = FirebaseStorage.getInstance()
         auth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
         var photoPickerIntent = Intent(Intent.ACTION_PICK)
         photoPickerIntent.type = "image/*"
         startActivityForResult(photoPickerIntent,PICK_IMAGE_FROM_ALBUM)
@@ -74,11 +73,10 @@ class AddPhotoActivity : AppCompatActivity() {
             var contentDTO = ContentDTO()
             // 이미지 주소
             contentDTO.imageUrl = uri!!.toString()
-
             //유저의 UID
             contentDTO.uio = auth?.currentUser?.uid
             //게시물 설명
-            contentDTO.explain = addphoto_edit_explain.toString()
+            contentDTO.explain = addphoto_edit_explain.text.toString()
             // 유저 아이디
             contentDTO.userId = auth?.currentUser?.email
             // 게시물 업로드 시간
@@ -89,9 +87,6 @@ class AddPhotoActivity : AppCompatActivity() {
             setResult(Activity.RESULT_OK)
 
             finish()
-
-
-
 
         }
 
