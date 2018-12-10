@@ -62,9 +62,7 @@ class DetailviewFragment : Fragment()
             return CustomViewHolder(view)
         }
 
-        inner class CustomViewHolder(view: View?) : RecyclerView.ViewHolder(view) {
-
-        }
+        private inner class CustomViewHolder(view: View?) : RecyclerView.ViewHolder(view)
 
         override fun getItemCount(): Int {
            return contentDTOs.size
@@ -82,8 +80,45 @@ class DetailviewFragment : Fragment()
 
             // 좋아요 카운터 설정
             viewHolder.detailviewitem_favoritecounter_textview.text ="좋아요 " + contentDTOs!![position].favoriteCount +"개"
+            // 런 트랜젝션 기법을 이용 // 한명이 점유하고 있으면 다른 사용자는 사용 할 수 없게 하는 방식
+            var uid = FirebaseAuth.getInstance().currentUser!!.uid
+            viewHolder.detailviewitem_favorite_imageview.setOnClickListener { view->
+                favoriteEvent(position)
+            }
+            //좋아요를 클릭했을 경우
+            if(contentDTOs!![position].favorites.containsKey(uid))
+            {
+                viewHolder.detailviewitem_favorite_imageview.setImageResource(R.drawable.ic_favorite)
+            }
+            //좋아요를 클릭하지 않았을 경우
+            else
+            {
+                viewHolder.detailviewitem_favorite_imageview.setImageResource(R.drawable.ic_favorite_border)
+            }
+        }
+        private fun favoriteEvent(position: Int)
+        {
+            var tsDoc = firestore?.collection("images")?.document(contentUidList[position])
+            firestore?.runTransaction {
+                transaction ->
+                var uid = FirebaseAuth.getInstance().currentUser!!.uid
+                var contentDTO = transaction.get(tsDoc!!).toObject(ContentDTO::class.java)
 
+                //좋아요를 누른 상태
+                if(contentDTO!!.favorites.containsKey(uid)){
+                    contentDTO.favoriteCount = contentDTO?.favoriteCount -1
+                    contentDTO?.favorites.remove(uid)
+                }
+                // 좋아요를 누르지 않은 상태
+                else
+                {
+                    contentDTO.favorites[uid] = true
+                    contentDTO?.favoriteCount = contentDTO?.favoriteCount + 1
 
+                }
+                transaction.set(tsDoc,contentDTO)
+            }
         }
     }
+
 }
