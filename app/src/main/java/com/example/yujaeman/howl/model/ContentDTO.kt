@@ -4,7 +4,7 @@ import java.sql.Timestamp
 
 data class ContentDTO(var explain: String? = null,
                        var imageUrl: String? = null,
-                       var uio : String?= null,
+                       var uid : String?= null,
                        var userId : String?= null,
                        var timestamp: Long?= null,
                        var favoriteCount : Int = 0,

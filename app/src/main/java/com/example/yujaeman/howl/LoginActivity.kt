@@ -66,6 +66,7 @@ class LoginActivity : AppCompatActivity() {
 
         googleSignInClient = GoogleSignIn.getClient(this,gso)
         callbackManager = CallbackManager.Factory.create()
+
         //printHashKey(this)
     }
 //
@@ -172,6 +173,7 @@ class LoginActivity : AppCompatActivity() {
     fun handleFaacebookAccessToken(token:AccessToken?)
     {
         var credential = FacebookAuthProvider.getCredential(token?.token!!)
+
         auth?.signInWithCredential(credential)?.addOnCompleteListener{task->
             if(task.isSuccessful)
             {

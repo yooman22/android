@@ -74,7 +74,7 @@ class AddPhotoActivity : AppCompatActivity() {
             // 이미지 주소
             contentDTO.imageUrl = uri!!.toString()
             //유저의 UID
-            contentDTO.uio = auth?.currentUser?.uid
+            contentDTO.uid = auth?.currentUser?.uid
             //게시물 설명
             contentDTO.explain = addphoto_edit_explain.text.toString()
             // 유저 아이디
