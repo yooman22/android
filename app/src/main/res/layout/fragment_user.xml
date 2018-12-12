@@ -53,9 +53,10 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/post"
+                    android:text="@string/follow"
             />
             <TextView
+                    android:id="@+id/account_tv_follewer_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/count_0"/>
@@ -69,9 +70,10 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/post"
+                    android:text="@string/following"
             />
             <TextView
+                    android:id="@+id/account_tv_following"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/count_0"/>

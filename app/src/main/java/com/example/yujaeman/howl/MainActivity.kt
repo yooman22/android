@@ -9,6 +9,7 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.view.MenuItem
+import android.view.View
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -18,6 +19,7 @@ import java.util.jar.Manifest
 class MainActivity : AppCompatActivity() , BottomNavigationView.OnNavigationItemSelectedListener {
     var PICK_FROFILE_FROM_ALBUM = 10
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
+        setToolbarDefault()
       when(p0.itemId)
       {
           R.id.action_home -> {
@@ -42,12 +44,23 @@ class MainActivity : AppCompatActivity() , BottomNavigationView.OnNavigationItem
               return true
           }
           R.id.action_account -> {
+              var uid = FirebaseAuth.getInstance().currentUser?.uid
               var userFragment = UserFragment()
+              var bundle = Bundle()
+              bundle.putString("destinationUid",uid)
+              userFragment.arguments = bundle
               supportFragmentManager.beginTransaction().replace(R.id.main_content,userFragment).commit()
               return true
           }
       }
         return false
+    }
+
+    fun setToolbarDefault()
+    {
+        toolbar_btn_back.visibility = View.GONE
+        toolbar_username.visibility = View.GONE
+        toolbar_title_image.visibility = View.VISIBLE
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

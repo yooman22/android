@@ -35,16 +35,12 @@ class DetailviewFragment : Fragment()
 
         val contentDTOs : ArrayList<ContentDTO>
         val contentUidList : ArrayList<String>
-
-
         init {
-
             contentDTOs = ArrayList()
             contentUidList = ArrayList()
-
             var uid = FirebaseAuth.getInstance().currentUser?.uid
-
             firestore?.collection("images")?.orderBy("timestamp")?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                if(querySnapshot==null) return@addSnapshotListener // 데이터가 없는 경우 그냥 꺼지는 현상이 발생
                 contentDTOs.clear()
                 contentUidList.clear()
                 for(snapshot in querySnapshot!!.documents)
@@ -99,6 +95,7 @@ class DetailviewFragment : Fragment()
                 var fragment = UserFragment()
                 var bundle = Bundle()
                 bundle.putString("destinationUid",contentDTOs[position].uid)
+                bundle.putString("userId",contentDTOs[position].userId)
                 fragment.arguments = bundle
                 activity!!.supportFragmentManager.beginTransaction().replace(R.id.main_content,fragment).commit()
             }

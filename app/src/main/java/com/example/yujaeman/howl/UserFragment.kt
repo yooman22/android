@@ -19,6 +19,7 @@ import com.example.yujaeman.howl.model.ContentDTO
 import com.example.yujaeman.howl.model.FollowDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_user.*
 import kotlinx.android.synthetic.main.fragment_user.view.*
 class UserFragment : Fragment()
@@ -30,14 +31,49 @@ class UserFragment : Fragment()
     //현재 나의 uid
     var uid : String? = null
     //내가 선택한 uid
+
+    var auth : FirebaseAuth? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         currentUid = FirebaseAuth.getInstance().currentUser?.uid
+        firestore = FirebaseFirestore.getInstance()
+        fragmentView = inflater.inflate(R.layout.fragment_user,container,false)
+        auth = FirebaseAuth.getInstance()
+
         Log.d("error","btn_check_before")
         if(arguments != null) {
             uid = arguments!!.getString("destinationUid")
+            if(uid !=null && uid== currentUid)
+            {
+                // 나의 유저 페이지
+                fragmentView?.account_btn_follow_signout?.text = getString(R.string.signout)
+                fragmentView?.account_btn_follow_signout?.setOnClickListener {
+                    activity?.finish()
+                    auth?.signOut()
+                    startActivity(Intent(activity,LoginActivity::class.java))
+
+                }
+            }
+            else
+            {
+                // 제 3자의 유저페이지
+                fragmentView?.account_btn_follow_signout?.text = getString(R.string.follow)
+
+                var mainActivity = (activity as MainActivity)
+                mainActivity.toolbar_title_image.visibility = View.GONE
+                mainActivity.toolbar_btn_back.visibility = View.VISIBLE
+                mainActivity.toolbar_username.visibility = View.VISIBLE
+                mainActivity.toolbar_username.text = arguments!!.getString("userId")
+                mainActivity.toolbar_btn_back.setOnClickListener {
+                    mainActivity.bottom_navigation.selectedItemId = R.id.action_home
+                }
+                fragmentView?.account_btn_follow_signout?.setOnClickListener { view ->
+                    requestFollow()
+                }
+            }
         }
-        firestore = FirebaseFirestore.getInstance()
-        fragmentView = inflater.inflate(R.layout.fragment_user,container,false)
+
+
         fragmentView?.account_iv_profile?.setOnClickListener {
             var photoPcikerIntent = Intent(Intent.ACTION_PICK)
             photoPcikerIntent.type = "image/*"
@@ -45,19 +81,17 @@ class UserFragment : Fragment()
         }
         fragmentView?.account_recyclerview?.adapter = UserFragmentRecyclerViewAdapter()
         fragmentView?.account_recyclerview?.layoutManager = GridLayoutManager(activity!!,3) as RecyclerView.LayoutManager?
+
+
         getProfileImages()
 
 
-            fragmentView?.account_btn_follow_signout?.setOnClickListener { view ->
-                if(uid == null)
-                {
-                    Toast.makeText(this.context, "자신을 팔로우 할 수 없습니다.", Toast.LENGTH_LONG).show()
-                }
-                else
-                {
-                    requestFollow()
-                }
+
+        var mainActivity = (activity as MainActivity)
+        mainActivity.toolbar_btn_back.setOnClickListener {
+            mainActivity.bottom_navigation.selectedItemId = R.id.action_home
         }
+        setFollower_following()
 
         return fragmentView
     }
@@ -71,10 +105,6 @@ class UserFragment : Fragment()
         firestore?.runTransaction {
                 transaction ->
             var followDTO = transaction.get(tsDocFollowing).toObject(FollowDTO::class.java)
-            if(uid == currentUid)
-            {
-                return@runTransaction
-            }
             if(followDTO == null)
             { // 아무도 팔로잉 하지 않았을 경우
                 followDTO = FollowDTO()
@@ -135,7 +165,7 @@ class UserFragment : Fragment()
 
     fun getProfileImages()
     {
-        firestore?.collection("profileImages")?.document(currentUid!!)?.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+        firestore?.collection("profileImages")?.document(uid!!)?.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
 
             if(documentSnapshot?.data !=null)
             {
@@ -145,12 +175,51 @@ class UserFragment : Fragment()
         }
     }
 
+    fun setFollower_following()
+    {
+        getFollower()
+        getFolloewing()
+    }
+
+    fun getFollower()
+    {
+        firestore?.collection("users")?.document(uid!!)?.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+            if(documentSnapshot == null) return@addSnapshotListener
+            var followDTO = documentSnapshot.toObject(FollowDTO::class.java)
+
+            if(followDTO?.followerCount == null)
+            {
+                fragmentView?.account_tv_follewer_count?.text = "0"
+            }
+            else {
+                fragmentView?.account_tv_follewer_count?.text = followDTO?.followerCount.toString()
+            }
+
+        }
+    }
+
+    fun getFolloewing()
+    {
+        firestore?.collection("users")?.document(uid!!)?.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+            if(documentSnapshot == null) return@addSnapshotListener
+            var followDTO = documentSnapshot.toObject(FollowDTO::class.java)
+            if(followDTO?.followingCount == null)
+            {
+                fragmentView?.account_tv_following?.text = "0"
+            }
+            else {
+                fragmentView?.account_tv_following?.text = followDTO?.followingCount.toString()
+            }
+        }
+    }
+
     inner class UserFragmentRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
     {
         var contentDTOs : ArrayList<ContentDTO?>
         init {
             contentDTOs = ArrayList()
-            firestore?.collection("images")?.whereEqualTo("uid",currentUid)?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+            firestore?.collection("images")?.whereEqualTo("uid",uid)?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                if(querySnapshot==null) return@addSnapshotListener // 데이터가 없는 경우 그냥 꺼지는 현상이 발생
                 for(snapshot in querySnapshot!!.documents) {
                     contentDTOs.add(snapshot.toObject(ContentDTO::class.java))
                 }
@@ -175,9 +244,5 @@ class UserFragment : Fragment()
             var imageview = (holder as CustomviewHolder).imageView
             Glide.with(holder.itemView.context).load(contentDTOs[position]?.imageUrl).apply(RequestOptions().centerCrop()).into(imageview)
         }
-
-
     }
-
-
 }
