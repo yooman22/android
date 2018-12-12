@@ -14,7 +14,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.jar.Manifest
 
 class MainActivity : AppCompatActivity() , BottomNavigationView.OnNavigationItemSelectedListener {
     var PICK_FROFILE_FROM_ALBUM = 10
@@ -39,7 +38,7 @@ class MainActivity : AppCompatActivity() , BottomNavigationView.OnNavigationItem
               return true
           }
           R.id.action_favorite_alarm-> {
-              var alertFragment = AlertFragment()
+              var alertFragment = AlarmFragment()
               supportFragmentManager.beginTransaction().replace(R.id.main_content,alertFragment).commit()
               return true
           }

@@ -1,6 +1,5 @@
 package com.example.yujaeman.howl
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -12,9 +11,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.yujaeman.howl.model.AlarmDTO
 import com.example.yujaeman.howl.model.ContentDTO
 import com.example.yujaeman.howl.model.FollowDTO
 import com.google.firebase.auth.FirebaseAuth
@@ -155,12 +154,25 @@ class UserFragment : Fragment()
             {
                 followDTO!!.followerCount = followDTO!!.followerCount + 1
                 followDTO!!.followers[currentUid!!] = true
+                followerAlarm(uid)
             }
 
             transaction.set(tsDocFollower,followDTO!!)
             return@runTransaction
         }
 
+    }
+
+    fun followerAlarm(destinationUid : String?)
+    {
+        var alarmDTO = AlarmDTO()
+        alarmDTO.destinationUid = destinationUid
+        alarmDTO.userId = auth?.currentUser!!.email
+        alarmDTO.uid = auth?.currentUser!!.uid
+        alarmDTO.kind = 2
+        alarmDTO.timestamp = System.currentTimeMillis()
+
+        FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
     }
 
     fun getProfileImages()
