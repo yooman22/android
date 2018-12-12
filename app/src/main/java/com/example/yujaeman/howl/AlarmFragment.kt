@@ -62,8 +62,8 @@ class AlarmFragment : Fragment()
                     commentTextview?.text = str_0
                 }
                 1->{
-                    var str_1 = alarmDTOList[position].userId + getString(R.string.alarm_who) +
-                            alarmDTOList[position].message +
+                    var str_1 = alarmDTOList[position].userId + getString(R.string.alarm_who) + " " +
+                            alarmDTOList[position].message + " " +
                             getString(R.string.alarm_comment)
                     commentTextview?.text = str_1
                 }
