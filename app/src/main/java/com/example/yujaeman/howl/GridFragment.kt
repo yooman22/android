@@ -61,6 +61,16 @@ class GridFragment : Fragment()
             var imageView =  (holder as CustomViewHolder).imageView
             imageView.setImageResource(R.drawable.btn_signin_facebook)
             Glide.with(holder.itemView.context).load(contentDTOs[position].imageUrl).apply(RequestOptions().centerCrop()).into(imageView)
+            imageView.setOnClickListener {
+                val fragment  = UserFragment()
+                var bundle  = Bundle()
+                bundle.putString("destinationUid",contentDTOs[position].uid)
+                bundle.putString("userId",contentDTOs[position].userId)
+
+                fragment.arguments = bundle
+
+                activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.main_content,fragment)?.commit()
+            }
         }
     }
 

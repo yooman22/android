@@ -114,19 +114,21 @@ class UserFragment : Fragment()
                 return@runTransaction
             }
             // 내 아이디가 제3자를 이미 팔로잉 하고 있을 경우
-            if (followDTO.followers.containsKey(uid))
+            else if (followDTO.followings.containsKey(uid))
             {
-                followDTO?.followerCount = followDTO?.followerCount -1
+                followDTO?.followingCount = followDTO?.followingCount -1
                 followDTO?.followings.remove(uid)
+                transaction.set(tsDocFollowing,followDTO)
+                return@runTransaction
             }
             else
             {
                 // 내가 제3자를 팔로잉 하지 않았을 경우
                 followDTO.followingCount = followDTO.followingCount + 1
                 followDTO.followings[uid!!] = true
+                transaction.set(tsDocFollowing,followDTO)
+                return@runTransaction
             }
-            transaction.set(tsDocFollowing,followDTO)
-            return@runTransaction
         }
         Log.d("error","send message2")
         var tsDocFollower = firestore!!.collection("users").document(uid!!)
@@ -143,22 +145,22 @@ class UserFragment : Fragment()
                 return@runTransaction
             }
             //제3자의 유저를 내가 팔로잉 하고 있을 경우
-            if(followDTO!!.followers.containsKey(currentUid!!))
+            else if(followDTO!!.followers.containsKey(currentUid!!))
             {
                 followDTO!!.followerCount = followDTO!!.followerCount - 1
                 followDTO!!.followers.remove(currentUid!!)
 
                 transaction.set(tsDocFollower,followDTO!!)
+                return@runTransaction
             }
             else // 제3자를 내가 팔로워 하지 않았을 경우 -> 팔로워 하겠다.
             {
                 followDTO!!.followerCount = followDTO!!.followerCount + 1
                 followDTO!!.followers[currentUid!!] = true
                 followerAlarm(uid)
+                transaction.set(tsDocFollower,followDTO!!)
+                return@runTransaction
             }
-
-            transaction.set(tsDocFollower,followDTO!!)
-            return@runTransaction
         }
 
     }

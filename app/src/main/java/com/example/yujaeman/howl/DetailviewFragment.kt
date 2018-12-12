@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.example.yujaeman.howl.model.AlarmDTO
 import com.example.yujaeman.howl.model.ContentDTO
+import com.example.yujaeman.howl.model.FollowDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_detail.view.*
@@ -41,15 +42,32 @@ class DetailviewFragment : Fragment()
             contentDTOs = ArrayList()
             contentUidList = ArrayList()
             var uid = FirebaseAuth.getInstance().currentUser?.uid
+
+            firestore?.collection("users")?.document(uid!!)?.get()?.addOnCompleteListener {
+                task ->
+                if(task.isSuccessful)
+                {
+                    var userDTO = task.result.toObject(FollowDTO::class.java)
+                    if(userDTO !=null) {
+                        getContent(userDTO.followings)
+                    }
+                }
+            }
+        }
+
+        fun getContent(follower : MutableMap<String,Boolean>)
+        {
             firestore?.collection("images")?.orderBy("timestamp")?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 if(querySnapshot==null) return@addSnapshotListener // 데이터가 없는 경우 그냥 꺼지는 현상이 발생
                 contentDTOs.clear()
                 contentUidList.clear()
                 for(snapshot in querySnapshot!!.documents)
                 {
-                 var item = snapshot.toObject(ContentDTO::class.java)
-                    contentDTOs.add(item!!)
-                    contentUidList.add(snapshot.id)
+                    var item = snapshot.toObject(ContentDTO::class.java)
+                    if(follower.keys.contains(item?.uid)) {
+                        contentDTOs.add(item!!)
+                        contentUidList.add(snapshot.id)
+                    }
                 }
                 notifyDataSetChanged() // 새로 고침하는 코드
             }
