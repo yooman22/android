@@ -60,9 +60,7 @@ class GridFragment : Fragment()
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             var imageView =  (holder as CustomViewHolder).imageView
             imageView.setImageResource(R.drawable.btn_signin_facebook)
-
             Glide.with(holder.itemView.context).load(contentDTOs[position].imageUrl).apply(RequestOptions().centerCrop()).into(imageView)
-
         }
     }
 
