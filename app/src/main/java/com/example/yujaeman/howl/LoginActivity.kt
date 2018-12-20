@@ -25,6 +25,8 @@ import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.nhn.android.naverlogin.OAuthLogin
+import com.nhn.android.naverlogin.OAuthLoginHandler
 import java.security.MessageDigest
 import java.util.*
 import javax.security.auth.callback.Callback
@@ -36,6 +38,7 @@ class LoginActivity : AppCompatActivity() {
     var googleSignInClient : GoogleSignInClient? = null
     var GOOGLE_LOGIN_CODE = 9001
     var callbackManager : CallbackManager?= null
+    var naverlogin : OAuthLogin? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +46,8 @@ class LoginActivity : AppCompatActivity() {
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
         auth = FirebaseAuth.getInstance()
+        naverlogin = OAuthLogin.getInstance()
+        naverlogin?.init(applicationContext,"YZpgTxSc0_9jwMV4KzSC","Yx7ljNGTo3","Equalizer")
 
         email_login_button.setOnClickListener{ view ->
             createAndLoginEmail()
@@ -153,6 +158,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
     }
+
 
     fun facebookLogin()
     {

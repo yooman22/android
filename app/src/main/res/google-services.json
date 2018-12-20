@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "416379000677",
+    "firebase_url": "https://howl-92804.firebaseio.com",
+    "project_id": "howl-92804",
+    "storage_bucket": "howl-92804.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:416379000677:android:c1a745b7ba563945",
+        "android_client_info": {
+          "package_name": "com.example.yujaeman.howl"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "416379000677-md5t0ga2kl6bj7cvfc3opm8ldpdj07q3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.yujaeman.howl",
+            "certificate_hash": "228261bdae6c7b07a86e82b456d4596db000c528"
+          }
+        },
+        {
+          "client_id": "416379000677-9fta0besvs4u95qf8jakaf6k91ef3q0a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.yujaeman.howl",
+            "certificate_hash": "09e6db88326b126927eece733bf7e77f1ad83325"
+          }
+        },
+        {
+          "client_id": "416379000677-epekd04m5remqv7q26ofhhjqukmg3g5h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6EYaP4VyqGD7S4EM86OR8Ep0_N3bllWY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "416379000677-epekd04m5remqv7q26ofhhjqukmg3g5h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

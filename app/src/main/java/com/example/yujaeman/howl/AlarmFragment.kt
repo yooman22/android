@@ -32,6 +32,7 @@ class AlarmFragment : Fragment()
             var uid = FirebaseAuth.getInstance().currentUser!!.uid
             FirebaseFirestore.getInstance().collection("alarms").whereEqualTo("destinationUid",uid).orderBy("timestamp").addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 if(querySnapshot == null) return@addSnapshotListener
+                alarmDTOList.clear()
                 for(snapshot in querySnapshot.documents!!)
                 {
                     alarmDTOList.add(snapshot.toObject(AlarmDTO::class.java)!!)

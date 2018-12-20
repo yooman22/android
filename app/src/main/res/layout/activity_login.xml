@@ -60,6 +60,18 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginBottom="5dp"
                 android:layout_height="40dp"/>
+        <Button android:layout_width="wrap_content"
+                android:id="@+id/naver_login_button"
+                android:textColor="@color/colorWhite"
+                android:background="@drawable/btn_signin_naver"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="5dp"
+                android:layout_height="40dp"/>
+        <ImageView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
         <Button android:layout_width="match_parent"
                 android:id="@+id/google_sign_in_button"
                 android:textColor="@color/colorWhite"
@@ -78,7 +90,6 @@
                 android:layout_marginRight="20dp"
                 android:layout_height="40dp"
                 android:layout_marginBottom="35dp"/>
-
     </LinearLayout>
 
 </RelativeLayout>

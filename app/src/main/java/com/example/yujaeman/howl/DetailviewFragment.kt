@@ -9,13 +9,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.example.yujaeman.howl.R.layout.item_detail
+import com.example.yujaeman.howl.R.layout.webview
 import com.example.yujaeman.howl.model.AlarmDTO
 import com.example.yujaeman.howl.model.ContentDTO
 import com.example.yujaeman.howl.model.FollowDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.fragment_detail.view.*
+import kotlinx.android.synthetic.main.item_detail.*
 import kotlinx.android.synthetic.main.item_detail.view.*
+import kotlinx.android.synthetic.main.webview.*
 
 class DetailviewFragment : Fragment()
 {
@@ -126,6 +131,20 @@ class DetailviewFragment : Fragment()
                 intent.putExtra("destinationUid",contentDTOs[position].uid)
                 startActivity(intent)
             }
+
+            viewHolder.link.setOnClickListener { view->
+
+                var messageService = MyFirebaseMessagingService()
+
+
+                var intent = Intent(view.context,WebPage::class.java)
+                startActivity(intent)
+            }
+            viewHolder.equal_button.setOnClickListener { view->
+                var intent = Intent(view.context,EqualizerActivity::class.java)
+                startActivity(intent)
+            }
+
         }
         private fun favoriteEvent(position: Int)
         {

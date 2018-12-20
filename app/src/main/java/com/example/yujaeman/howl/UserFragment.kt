@@ -126,6 +126,7 @@ class UserFragment : Fragment()
                 // 내가 제3자를 팔로잉 하지 않았을 경우
                 followDTO.followingCount = followDTO.followingCount + 1
                 followDTO.followings[uid!!] = true
+                followerAlarm(uid!!)
                 transaction.set(tsDocFollowing,followDTO)
                 return@runTransaction
             }
@@ -157,7 +158,6 @@ class UserFragment : Fragment()
             {
                 followDTO!!.followerCount = followDTO!!.followerCount + 1
                 followDTO!!.followers[currentUid!!] = true
-                followerAlarm(uid)
                 transaction.set(tsDocFollower,followDTO!!)
                 return@runTransaction
             }
@@ -215,9 +215,9 @@ class UserFragment : Fragment()
     fun getFolloewing()
     {
         firestore?.collection("users")?.document(uid!!)?.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
-            if(documentSnapshot == null) return@addSnapshotListener
+            if (documentSnapshot == null) return@addSnapshotListener
             var followDTO = documentSnapshot.toObject(FollowDTO::class.java)
-            if(followDTO?.followingCount == null)
+            if (followDTO?.followingCount == null)
             {
                 fragmentView?.account_tv_following?.text = "0"
             }
@@ -233,11 +233,17 @@ class UserFragment : Fragment()
         init {
             contentDTOs = ArrayList()
             firestore?.collection("images")?.whereEqualTo("uid",uid)?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                if(querySnapshot==null) return@addSnapshotListener // 데이터가 없는 경우 그냥 꺼지는 현상이 발생
+                if(querySnapshot == null) return@addSnapshotListener // 데이터가 없는 경우 그냥 꺼지는 현상이 발생
                 for(snapshot in querySnapshot!!.documents) {
                     contentDTOs.add(snapshot.toObject(ContentDTO::class.java))
                 }
-                account_tv_post_count.text = contentDTOs.size.toString()
+                if(contentDTOs == null)
+                {
+                    account_tv_post_count.text = "0"
+                }
+                else {
+                    account_tv_post_count.text = contentDTOs.size.toString()
+                }
                 notifyDataSetChanged()
             }
         }

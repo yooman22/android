@@ -42,9 +42,20 @@
                 <data android:scheme="/fb_login_protocol_scheme"/>
             </intent-filter>
         </activity>
+
+        <service android:name=".MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
         <activity android:name=".AddPhotoActivity">
         </activity>
         <activity android:name=".CommentActivity">
+        </activity>
+        <activity android:name=".WebPage">
+        </activity>
+        <activity android:name=".EqualizerActivity">
         </activity>
     </application>
 
